@@ -1,0 +1,6 @@
+model_name_or_path: Qwen/Qwen3-4B
+template: qwen
+infer_backend: huggingface
+trust_remote_code: true
+max_new_tokens: 32768
+temperature: 0.6

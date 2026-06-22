@@ -1,0 +1,6 @@
+model_name_or_path: /ist-project/scads/jenta/scale-pot/retool/checkpoint/qwen2.5-7b_bsft_dapo_container_v2_no_validation_rev4
+template: qwen
+infer_backend: huggingface  # choices: [huggingface, vllm]
+trust_remote_code: true
+temperature: 0.6
+max_new_tokens: 32768

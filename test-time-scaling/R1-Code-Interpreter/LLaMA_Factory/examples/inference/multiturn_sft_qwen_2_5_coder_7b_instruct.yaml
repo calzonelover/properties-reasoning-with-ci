@@ -1,0 +1,5 @@
+model_name_or_path: /ist-project/scads/jenta/scale-pot/retool/checkpoint/multiturn-sft-qwen-2.5-coder-7b-instruct
+template: qwen
+infer_backend: huggingface  # choices: [huggingface, vllm]
+trust_remote_code: true
+temperature: 0.6

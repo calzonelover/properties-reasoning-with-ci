@@ -1,0 +1,5 @@
+model_name_or_path: JoeYing/ReTool-Qwen-32B
+template: qwen
+infer_backend: huggingface  # choices: [huggingface, vllm]
+trust_remote_code: true
+temperature: 0.6

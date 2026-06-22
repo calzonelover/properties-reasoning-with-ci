@@ -1,0 +1,5 @@
+model_name_or_path: /ist-project/scads/jenta/models/Qwen/Qwen2.5-7B-Instruct
+template: qwen
+infer_backend: huggingface
+trust_remote_code: true
+temperature: 0.6

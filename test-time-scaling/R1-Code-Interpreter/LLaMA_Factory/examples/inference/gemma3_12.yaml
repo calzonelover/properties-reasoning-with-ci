@@ -1,0 +1,6 @@
+model_name_or_path: /ist-project/scads/jenta/models/gemma-3-12b-it
+template: gemma
+infer_backend: huggingface  # choices: [huggingface, vllm]
+trust_remote_code: true
+temperature: 0.6
+max_new_tokens: 32768

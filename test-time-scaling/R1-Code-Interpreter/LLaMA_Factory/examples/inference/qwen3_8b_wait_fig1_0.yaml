@@ -1,0 +1,11 @@
+model_name_or_path: Qwen/Qwen3-8B
+template: qwen
+infer_backend: huggingface
+trust_remote_code: true
+max_new_tokens: 32768
+cache_dir: /ist-project/scads/jenta/cache/models--Qwen--Qwen3-8B
+custom_logits_processor: 
+    - type: ReplaceToken
+      avoid_token: </think>
+      replace_token: Wait
+      max_avoid_count: 0

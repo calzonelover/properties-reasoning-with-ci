@@ -1,0 +1,5 @@
+model_name_or_path: /ist-project/scads/jenta/scale-pot/R1-Code-Interpreter/Search-R1/verl_checkpoints/R1-CI-grpo-qwen-3b-v2-sft-test/actor/global_step_80
+template: qwen
+infer_backend: huggingface  # choices: [huggingface, vllm]
+trust_remote_code: true
+temperature: 0.6

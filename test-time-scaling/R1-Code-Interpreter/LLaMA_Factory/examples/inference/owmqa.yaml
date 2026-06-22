@@ -1,0 +1,5 @@
+model_name_or_path: obiwan96/owmqa_method
+template: llama3
+infer_backend: huggingface
+trust_remote_code: true
+temperature: 0.6

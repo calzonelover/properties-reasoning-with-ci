@@ -1,0 +1,5 @@
+model_name_or_path: /ist-project/scads/jenta/scale-pot/R1-Code-Interpreter/saves/qwen-3b-1M-R1-CI-round4_v1/full/sft
+template: qwen
+infer_backend: huggingface  # choices: [huggingface, vllm]
+trust_remote_code: true
+temperature: 0.6
