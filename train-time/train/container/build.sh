@@ -1,0 +1,1 @@
+apptainer build custom_img.sif custom_img.def

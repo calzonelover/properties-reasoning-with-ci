@@ -1,0 +1,9 @@
+Bootstrap: docker
+From: verlai/verl:base-verl0.6-cu128-cudnn9.8-torch2.8.0-fa2.7.4
+
+%post
+    git clone https://github.com/volcengine/verl --branch v0.6.1 && cd verl
+    pip3 install --upgrade pip
+    USE_MEGATRON=0 bash scripts/install_vllm_sglang_mcore.sh
+    pip3 install --no-deps -e .
+    pip3 install numpy==2.2.6
