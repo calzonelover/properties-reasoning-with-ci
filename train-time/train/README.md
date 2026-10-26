@@ -193,7 +193,7 @@ export OMP_NUM_THREADS=1
 
 apptainer exec --nv --bind /dev/shm:/dev/shm --writable-tmpfs ./container/custom_img.sif /bin/bash -c \
     "export LD_LIBRARY_PATH=/usr/local/cuda-12.8/compat:\${LD_LIBRARY_PATH} \
-    && nvidia-smi && pip install numpy==2.2.6 \
+    && nvidia-smi \
     && ./jobs/{JOB_SCRIPT}"
 ```
 
