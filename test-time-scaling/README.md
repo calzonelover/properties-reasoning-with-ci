@@ -43,7 +43,7 @@ ln -s ../../../train-time/evaluation/executor.py retool/executor.py
 Downloaded weights are served in-process by LLaMA-Factory, pointed at by `model_name_or_path`. `--LLM_path` is a **file name** under `LLaMA_Factory/examples/inference/`:
 
 ```yaml
-model_name_or_path: /path/to/checkpoint/multiturn-bsft-qwen-2.5-coder-7b-instruct
+model_name_or_path: /path/to/checkpoint/model
 template: qwen
 infer_backend: huggingface  # choices: [huggingface, vllm]
 trust_remote_code: true
@@ -54,16 +54,16 @@ temperature: 0.6
 
 | File | Variable | Current value |
 |:---|:---|:---|
-| `benchmark_inference_test_generic.py` | `infer_base_path` | `/ist-project/scads/jenta/scale-pot/.../examples/inference/` |
-| `benchmark/run_R1_code_interpreter_data_syn.py` | `result_path` (`eval-only` branch) | `/ist-project/scads/jenta/result-table3/...` |
-| `dataset_creation_1.py` | `base_path` | `/home/ycchen/R1-Code-Interpreter/results_gather` |
+| `benchmark_inference_test_generic.py` | `infer_base_path` | `/examples/inference/` |
+| `benchmark/run_R1_code_interpreter_data_syn.py` | `result_path` (`eval-only` branch) | `/result-table3/...` |
+| `dataset_creation_1.py` | `base_path` | `/R1-Code-Interpreter/results_gather` |
 
 ### 4. Model routing
 
 `answer_sampling_func` picks the backend from `--model_name`: ids on its allow-list go to `GPT_response` in `generation_models.py`, everything else to LLaMA-Factory's `run_response`. There are therefore two ways to run downloaded weights:
 
 - **In-process** — a LLaMA-Factory YAML whose `model_name_or_path` is the local path (step 2). This is the default route, since any unrecognised `--model_name` lands here.
-- **Over an OpenAI-compatible server** — `generation_models.py` talks to whatever `LLM_BASE_URL` points at, so weights served by vLLM/SGLang work by passing the served id or path as `--model_name`. The repo already does this for `deepseek-ai/DeepSeek-V3` and `/opt/models/Qwen/Qwen3-{235B-A22B-Instruct-2507,Next-80B-A3B-Instruct}-FP8`.
+- **Over an OpenAI-compatible server** — `generation_models.py` talks to whatever `LLM_BASE_URL` points at, so weights served by vLLM/SGLang work by passing the served id or path as `--model_name`.
 
 Going the second route means adding your id to **both** allow-lists, or it silently falls through to LLaMA-Factory or raises `Model name is wrong!`:
 
@@ -78,7 +78,7 @@ Environment variables read by `generation_models.py`:
 
 | Variable | Default | Used for |
 |:---|:---|:---|
-| `LLM_BASE_URL` | `http://10.0.0.51:8081/v1/chat/completions` | OpenAI-compatible endpoint |
+| `LLM_BASE_URL` | - | OpenAI-compatible endpoint |
 | `LLM_API_KEY` | `sk-` | Key for that endpoint |
 | `LLM_MODEL_NAME` | `gpt-4o` | Judge model used by the verifiers |
 
