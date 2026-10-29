@@ -103,14 +103,6 @@ python benchmark_inference_test_generic.py \
 | `--baseline_method_name` | `None` | One method from the table above |
 | `--max_n_tasks` | `10000` | Cap the task sweep to the first *n* tasks |
 
-`start_index` (`0`), `max_sample_num` (`100`) and `max_round_num` (`5`) are hard-coded in `__main__`; edit them in place.
-
-> **Resume does not work — finished tasks are re-run.** `run_logic_game_baselines` is meant to skip any task already listed in
-> `results_gather/acc_result_log_{model}_together.txt`, but it calls a bare `f.close()` after reading the log with `as file`.
-> That raises `NameError`, its own `except Exception` swallows it, and `task_exists` stays `False`. Until the stray `f.close()`
-> is removed, trim the sweep by hand when continuing an interrupted run, or you will pay for every finished task again.
-> (`symbench_retool_eval.py` has the same check written correctly.)
-
 ## Output
 
 ```
