@@ -43,12 +43,39 @@ ln -s ../../../train-time/evaluation/executor.py retool/executor.py
 Downloaded weights are served in-process by LLaMA-Factory, pointed at by `model_name_or_path`. `--LLM_path` is a **file name** under `LLaMA_Factory/examples/inference/`:
 
 ```yaml
-model_name_or_path: /path/to/checkpoint/model
+model_name_or_path: Qwen/Qwen3-8B
 template: qwen
 infer_backend: huggingface  # choices: [huggingface, vllm]
 trust_remote_code: true
 temperature: 0.6
+max_new_tokens: 32768
+cache_dir: /path/to/hf/cache
+
+# optional - keep the thinking block going instead of letting it close
+custom_logits_processor:
+    - type: ReplaceToken
+      avoid_token: </think>
+      replace_token: Wait
+      max_avoid_count: 5
 ```
+
+#### Thinking-budget forcing
+
+`custom_logits_processor` is a test-time knob independent of `--baseline_method_name`: rather than letting a reasoning model close its thinking block when it wants to, suppress `</think>` and force a continuation token so the trace keeps going.
+
+| Key | Meaning |
+|:---|:---|
+| `type` | Only `ReplaceToken` is implemented |
+| `avoid_token` | Token to suppress whenever it is the top-1 prediction — `</think>` for Qwen3 |
+| `replace_token` | Token forced in its place, becoming the next continuation cue |
+| `max_avoid_count` | Budget: how many times the suppression may fire. `0` disables it, giving the unforced baseline |
+
+On each decoding step `ReplaceToken` takes `argmax(scores)`; if it equals `avoid_token` and the budget is not spent, it sets that logit to `-1e9` and `replace_token` to `1e9`, then increments the counter. Implementation: `get_logits_processor` and `class ReplaceToken` in [`LLaMA_Factory/src/llamafactory/extras/misc.py`](R1-Code-Interpreter/LLaMA_Factory/src/llamafactory/extras/misc.py), wired in at `chat/hf_engine.py`. Two consequences:
+
+- **The budget is per generation call, not per sample.** `hf_engine._process_args` builds a fresh `ReplaceToken` for every request, so in the multi-round code-interpreter baselines `max_avoid_count: 5` allows up to 5 injections *in each round*, and the count resets when execution output is fed back.
+- **Both tokens must be single vocabulary entries**, since they are resolved with `convert_tokens_to_ids`, an exact vocab lookup rather than an encode. Angle brackets apply only to the thinking tags (`</think>`, `<think>`); the continuation cue is a plain word such as `Wait`, `Let` or `Check`. A value that is not in the vocabulary resolves to `None` and corrupts the whole logit row without raising, so check a new cue resolves before trusting a run. Adding a genuinely new token instead means `add_special_tokens` plus an embedding resize and further training — not a YAML change.
+
+15 YAMLs here already declare the processor, all avoiding `</think>`. For example `qwen3_8b_wait_fig1_0.yaml` (budget `0`, the unforced baseline), `qwen3_8b_wait_fig1_5.yaml` (budget `5`) and `test_15.yaml` (budget `15`) sweep the budget at a fixed cue, while `qwen3_8b_let.yaml` and `qwen3_8b_check.yaml` swap the cue at a fixed budget.
 
 ### 3. Hard-coded paths to change
 
